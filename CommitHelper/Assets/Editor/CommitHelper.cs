@@ -18,20 +18,106 @@ public class CommitHelper : EditorWindow
     {
         GUILayout.BeginHorizontal();
 
-        myString = EditorGUILayout.TextField("Inserte mensaje", myString);
+        GUILayout.Label("Show status of current version");
 
-        if(GUILayout.Button("Commit"))
+        if(GUILayout.Button("Status"))
         {
-            Commit();
+            ShowStatus();
         }
 
         GUILayout.EndHorizontal();
+
+        GUILayout.BeginHorizontal();
+
+        GUILayout.Label("Add all changes and commit with a message");
+
+        myString = GUILayout.TextField(myString);
+
+        if(GUILayout.Button("Commit"))
+        {
+            Commit(myString);
+        }
     }
 
-    private void Commit()
+    private void Commit(string myString)
     {
-        Debug.Log("Se abre el cmd");
+        AddAllChangesForCommit();
 
-        Process process = Process.Start("cmd.exe");
+        string command = $"commit -m\"{myString}\"";
+
+        ProcessStartInfo startInfo = new ProcessStartInfo
+        {
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            FileName = "git",
+            CreateNoWindow = false
+        };
+
+        Process process = new Process();
+
+        process.StartInfo = startInfo;
+
+        process.StartInfo.Arguments = command;
+
+        process.Start();
+
+        string result = process.StandardOutput.ReadToEnd().Trim();
+
+        process.WaitForExit();
+
+        Debug.Log(result);
+    }
+
+    private void AddAllChangesForCommit()
+    {
+        string command = "add .";
+
+        ProcessStartInfo startInfo = new ProcessStartInfo
+        {
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            FileName = "git",
+            CreateNoWindow = false
+        };
+
+        Process process = new Process();
+
+        process.StartInfo = startInfo;
+
+        process.StartInfo.Arguments = command;
+
+        process.Start();
+        
+        process.WaitForExit();
+
+        
+    }
+
+    private void ShowStatus()
+    {        
+        string command = "status";
+
+        ProcessStartInfo startInfo = new ProcessStartInfo
+        {
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            FileName = "git",
+            CreateNoWindow = false
+        };
+                
+        Process process = new Process();
+
+        process.StartInfo = startInfo;
+
+        process.StartInfo.Arguments = command;
+        
+        process.Start();
+        
+        string result = process.StandardOutput.ReadToEnd().Trim();
+
+        process.WaitForExit();
+
+        Debug.Log(result);
+
     }
 }
