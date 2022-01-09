@@ -16,6 +16,7 @@ public class CommitHelper : EditorWindow
 
     private void OnGUI()
     {
+        //Status Section
         GUILayout.BeginHorizontal();
 
         GUILayout.Label("Show status of current version");
@@ -27,6 +28,8 @@ public class CommitHelper : EditorWindow
 
         GUILayout.EndHorizontal();
 
+
+        //Commit Section
         GUILayout.BeginHorizontal();
 
         GUILayout.Label("Add all changes and commit with a message");
@@ -37,6 +40,43 @@ public class CommitHelper : EditorWindow
         {
             Commit(myString);
         }
+
+        GUILayout.EndHorizontal();
+
+        //Push Section
+        GUILayout.BeginHorizontal();
+
+        GUILayout.Label("Push commited changes");
+        
+        if (GUILayout.Button("Push"))
+        {
+            PushCommitedChanges();
+        }
+
+        GUILayout.EndHorizontal();
+    }
+
+    private void PushCommitedChanges()
+    {
+        string command = "push";
+
+        ProcessStartInfo startInfo = new ProcessStartInfo
+        {
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            FileName = "git",
+            CreateNoWindow = false
+        };
+
+        Process process = new Process();
+
+        process.StartInfo = startInfo;
+
+        process.StartInfo.Arguments = command;
+
+        process.Start();
+
+        process.WaitForExit();
     }
 
     private void Commit(string myString)
@@ -88,9 +128,7 @@ public class CommitHelper : EditorWindow
 
         process.Start();
         
-        process.WaitForExit();
-
-        
+        process.WaitForExit();        
     }
 
     private void ShowStatus()
